@@ -1,3 +1,9 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def index(request):
+    data = {
+        'name': 'Name',
+        'gold': 0
+    }
+    return render(request, 'character/index.html', context=data)
