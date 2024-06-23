@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block content_main%}
-    <p>Name: {{ name }}</p>
-    <hr>
-    <p>Gold: {{ gold }}</p>
+    {% for stat, value in values.items %}
+        {% if stat == 'Health' %}
+            <p>{{ stat }}: {{ value|first }}/{{ value|last }}</p>
+        {% else %}
+            <p>{{ stat }}: {{ value }}</p>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
