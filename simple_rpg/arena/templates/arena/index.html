@@ -1,9 +1,25 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link type="text/css" href="{% static 'arena/css/index.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content_header %}
     <h1>Arena</h1>
 {% endblock %}
 
 {% block content_main%}
-
+    <div class="wrapper">
+        <div class="enemy entity">
+            {% for stat, value in enemy.items%}
+                <p>{{ stat }}: {{ value }}</p>
+            {% endfor %}
+        </div>
+        <div class="character entity">
+            {% for stat, value in enemy.items%}
+                <p>{{ stat }}: {{ value }}</p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
