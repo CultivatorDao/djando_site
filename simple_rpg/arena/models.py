@@ -9,3 +9,4 @@ class Enemy(models.Model):
     damage = models.IntegerField(default=10)
     defence = models.IntegerField(default=5)
     gold_reward = models.IntegerField(default=0)
+    exp_reward = models.IntegerField(default=0)

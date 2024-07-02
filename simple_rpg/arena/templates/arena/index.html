@@ -10,16 +10,20 @@
 {% endblock %}
 
 {% block content_main%}
-    <div class="wrapper">
+    {% if outcome %}
+        <h1>{{ outcome }}</h1>
+    {% endif %}
+    <div class="wrapper-flex">
         <div class="enemy entity">
             {% for stat, value in enemy.items%}
                 <p>{{ stat }}: {{ value }}</p>
             {% endfor %}
         </div>
         <div class="character entity">
-            {% for stat, value in enemy.items%}
+            {% for stat, value in character.items%}
                 <p>{{ stat }}: {{ value }}</p>
             {% endfor %}
         </div>
     </div>
+    <a href="{{ next }}">Attack</a>
 {% endblock %}

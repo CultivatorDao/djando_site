@@ -4,7 +4,17 @@ body {
     font-family: "Silkscreen", sans-serif;
 }
 
+a {
+    text-decoration: none;
+    color: red;
+}
+
 h1 {
     color: red;
     font-weight: 400;
+}
+
+.wrapper {
+    width: 700px;
+    margin: 0 auto
 }
