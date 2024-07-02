@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content_header %}
+    <h1>Character</h1>
+{% endblock %}
+
+{% block content_main%}
+    {% for stat, value in values.items %}
+        {% if stat == 'Health' %}
+            <p>{{ stat }}: {{ value|first }}/{{ value|last }} <a href="{{ next }}?attribute={{ stat|lower }}">+</a> </p>
+        {% elif stat == 'Damage' or stat == 'Defence' %}
+            <p>{{ stat }}: {{ value }} <a href="{{ next }}?attribute={{ stat|lower }}">+</a> </p>
+        {% else %}
+            <p>{{ stat }}: {{ value }}</p>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

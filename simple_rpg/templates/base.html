@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Rpg</title>
+    <link type="text/css" href="{% static 'base/css/base.css' %}" rel="stylesheet">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            {% block content_header %}{% endblock %}
+        </header>
+        <main>
+            <p>{{ character.exp_current }}/{{ character.exp_next }}</p>
+            {% block content_main %}{% endblock %}
+
+            <ul>
+                <li><a href="#">Adventure</a></li>
+                <li><a href="{% url 'arena' %}">Battle</a> </li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="{% url 'character_profile' %}">Profile</a></li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>
