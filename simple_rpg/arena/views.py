@@ -37,6 +37,7 @@ def index(request):
             player.exp_current += int(request.GET['reward'])
             if player.exp_current >= player.exp_next:
                 player.level += 1
+                player.attribute_points += 2
                 player.exp_current -= player.exp_next
                 player.exp_next += player.exp_next * 0.2
             player.save()
