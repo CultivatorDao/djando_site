@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from managers.battle_manager import BattleManager
+
 import random
 
 from .models import Enemy
@@ -9,28 +11,14 @@ from character.models import Character
 # Create your views here.
 
 
+battle_manager = BattleManager()
+
+
 def index(request):
     enemy = Enemy.objects.all()[random.randint(0, 1)]
     player = Character.objects.get(pk=1)
-    outcome = 'victory' if enemy.health // (player.damage - enemy.defence) <= player.max_hp // (enemy.damage - player.defence) else 'lose'
-    data = {
-        'enemy': {
-            'name': enemy.name,
-            'health': enemy.health,
-            'damage': enemy.damage,
-            'defence': enemy.defence,
-            'exp_reward': enemy.exp_reward
-        },
-        'character': {
-            'name': player.name,
-            'health': player.max_hp,
-            'damage': player.damage,
-            'defence': player.defence,
-            'exp_current': player.exp_current,
-            'exp_next': player.exp_next
-        },
-        'next': f"{reverse('arena')}?outcome={outcome}&reward={enemy.exp_reward}",
-    }
+    battle_manager.next = reverse('arena')
+    data = battle_manager.arena_fight_calculate(player=player, enemy=enemy)
     if request.GET:
         data['outcome'] = request.GET['outcome']
         if request.GET['outcome'] == 'victory':

@@ -1,22 +1,27 @@
 class BattleManager:
 
-    def __init__(self, models):
-        self.models = models
-        self.player_model = models['player']
-        self.enemy_model = models['enemy']
+    def __init__(self, next_url=None):
+        self.next = next_url
 
-    # get player id from request
-    def get_player(self, request):
-        pass
+    def get_info(self, options: dict = None, **kwargs):
+        # TODO: add docstring
+        if not kwargs:
+            return {}
 
-    def fight_info(self, player: int = None, enemy: int = None):
-        """
-        Return information about player and enemy as dictionary.
-        :return:
-        """
-        return {}
+        data = {}
+        for key, value in kwargs.items():
+            data[key] = value.__dict__
+            if options.get('except'):
+                for exclude in options.get('except'):
+                    data[key].pop(exclude)
 
-    def arena_fight_calculate(self, player: int = None, enemy: int = None):
+        if options.get('next'):
+            # TODO: make this more general for universal use
+            data['next'] = f"{self.next}?outcome={options['next'][0]}&reward={data['enemy']['exp_reward']}"
+
+        return data
+
+    def arena_fight_calculate(self, player, enemy):
         """
         Calculates outcome of arena battle. Return data dictionary.
         :return:
@@ -24,14 +29,16 @@ class BattleManager:
         if not (player and enemy):
             return {}
 
-        player = self.player_model.objects.get(pk=player)
-        enemy = self.enemy_model.objects.get(pk=enemy)
+        player_damage = 1 if not (player.damage - enemy.defence) else player.damage - enemy.defence
+        enemy_damage = 1 if not (enemy.damage - player.defence) else enemy.damage - player.defence
+        outcome = "victory" if enemy.health // player_damage <= player.max_hp // enemy_damage else "lose",
 
-        data = self.fight_info(player, enemy)
-
-        data['outcome'] = \
-            'victory' \
-            if enemy.health // (player.damage - enemy.defence) <= player.max_hp //\
-            (enemy.damage - player.defence) else 'lose'
+        data = self.get_info(
+            options={
+                'next': outcome,
+                'except': ["_state", "id"]
+            },
+            character=player,
+            enemy=enemy)
 
         return data
