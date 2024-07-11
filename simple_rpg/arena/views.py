@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from managers.battle_manager import BattleManager
+from managers.character_manager import CharacterManager
 
 import random
 
@@ -12,6 +13,7 @@ from character.models import Character
 
 
 battle_manager = BattleManager()
+character_manager = CharacterManager()
 
 
 def index(request):
@@ -26,11 +28,5 @@ def battle_result(request):
     player = Character.objects.get(pk=1)
     if request.GET:
         if request.GET['outcome'] == 'victory':
-            player.exp_current += int(request.GET['reward'])
-            if player.exp_current >= player.exp_next:
-                player.level += 1
-                player.attribute_points += 2
-                player.exp_current -= player.exp_next
-                player.exp_next += player.exp_next * 0.2
-            player.save()
+            character_manager.get_reward(player, int(request.GET['reward']), 'exp')
     return redirect('arena')
