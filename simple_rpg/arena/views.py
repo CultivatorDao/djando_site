@@ -17,10 +17,14 @@ battle_manager = BattleManager()
 def index(request):
     enemy = Enemy.objects.all()[random.randint(0, 1)]
     player = Character.objects.get(pk=1)
-    battle_manager.next = reverse('arena')
+    battle_manager.next = reverse('result')
     data = battle_manager.arena_fight_calculate(player=player, enemy=enemy)
+    return render(request, 'arena/index.html', data)
+
+
+def battle_result(request):
+    player = Character.objects.get(pk=1)
     if request.GET:
-        data['outcome'] = request.GET['outcome']
         if request.GET['outcome'] == 'victory':
             player.exp_current += int(request.GET['reward'])
             if player.exp_current >= player.exp_next:
@@ -29,8 +33,4 @@ def index(request):
                 player.exp_current -= player.exp_next
                 player.exp_next += player.exp_next * 0.2
             player.save()
-    return render(request, 'arena/index.html', data)
-
-
-def battle_result(request):
     return redirect('arena')
