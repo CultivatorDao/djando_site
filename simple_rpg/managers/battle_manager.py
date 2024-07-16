@@ -3,7 +3,7 @@ class BattleManager:
     def __init__(self, next_url=None):
         self.next = next_url
 
-    def get_info(self, options: dict = None, **kwargs):
+    def get_info(self, options: dict = {}, **kwargs):
         # TODO: add docstring
         if not kwargs:
             return {}

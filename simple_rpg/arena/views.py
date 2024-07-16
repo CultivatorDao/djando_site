@@ -30,3 +30,8 @@ def battle_result(request):
         if request.GET['outcome'] == 'victory':
             character_manager.get_reward(player, int(request.GET['reward']), 'exp')
     return redirect('arena')
+
+
+def colosseum(request):
+    player = Character.objects.get(pk=1)
+
