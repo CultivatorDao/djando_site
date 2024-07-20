@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='arena'),
-    path('result/', views.battle_result, name='result'),
+    path('infinite_grinding', views.infinite_grinding, name='infinite_grinding'),
+    path('result/', views.infinite_grinding_result, name='result'),
     path('colosseum/', views.colosseum, name='colosseum')
 ]

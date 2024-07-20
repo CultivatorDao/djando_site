@@ -18,24 +18,30 @@ character_manager = CharacterManager()
 
 # Buffer view that contains links to various battle views
 def index(request):
-    enemy = Enemy.objects.all()[random.randint(0, 1)]
-    player = Character.objects.get(pk=1)
-    battle_manager.next = reverse('result')
-    data = battle_manager.arena_fight_calculate(player=player, enemy=enemy)
+    data = {
+        "menu": {
+            "Infinite Grinding": reverse("infinite_grinding"),
+            "Colosseum": reverse("colosseum")
+        }
+    }
     return render(request, 'arena/index.html', data)
 
 
 def infinite_grinding(request):
-    pass
+    enemy = Enemy.objects.all()[random.randint(0, 1)]
+    player = Character.objects.get(pk=1)
+    battle_manager.next = reverse('result')
+    data = battle_manager.arena_fight_calculate(player=player, enemy=enemy)
+
+    return render(request, 'arena/infinite_grinding.html', data)
 
 
-# TODO: Rename to infinite_grinding_result
-def battle_result(request):
+def infinite_grinding_result(request):
     player = Character.objects.get(pk=1)
     if request.GET:
         if request.GET['outcome'] == 'victory':
             character_manager.get_reward(player, int(request.GET['reward']), 'exp')
-    return redirect('arena')
+    return redirect('infinite_grinding')
 
 
 def colosseum(request):

@@ -2,7 +2,6 @@
     display: flex;
 }
 
-.entity {
-    width: 150px;
-    margin: 0 10px;
+.menu {
+    list-style: none;
 }
