@@ -12,7 +12,7 @@ class BattleManager:
 
         data = {}
         for key, value in kwargs.items():
-            data[key] = value.__dict__
+            data[key] = value.__dict__.copy()
             if options.get('except'):
                 for exclude in options.get('except'):
                     if data[key].get(exclude):

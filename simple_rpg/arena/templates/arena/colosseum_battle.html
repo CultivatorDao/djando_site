@@ -11,10 +11,7 @@
 
 {% block content_main%}
 
-    <ul>
-        {% for key, value in enemies.items %}
-        <li>{{ key }}: {{ value }}</li>
-        {% endfor %}
-    </ul>
+    <p>{{ player }}</p>
+    <p>{{ enemy }}</p>
 
 {% endblock %}

@@ -45,6 +45,29 @@ def infinite_grinding_result(request):
 
 
 def colosseum(request):
+    enemies = StrongEnemy.objects.all()
+
+    data = {}
+
+    for enemy in enemies:
+        data[enemy.name] = battle_manager.get_info(
+            options={
+                'except': ["_state", "name"]
+            },
+            enemy=enemy
+        )['enemy']
+
+    return render(
+        request,
+        'arena/colosseum.html',
+        {
+            'enemies': data,
+            'next': reverse('colosseum_battle', args=["battle"])
+        }
+    )
+
+
+def colosseum_battle(request, state):
     player = Character.objects.get(pk=1)
     enemy = StrongEnemy.objects.get(pk=1)
 
@@ -67,12 +90,4 @@ def colosseum(request):
 
     data = battle_manager.colosseum_fight_calculate(battle)
 
-    return render(request, 'arena/colosseum.html', data)
-
-
-def colosseum_battle(request):
-    pass
-
-
-def colosseum_battle_result(request):
-    pass
+    return render(request, 'arena/colosseum_battle.html', data)
