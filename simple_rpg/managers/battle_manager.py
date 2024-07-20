@@ -3,8 +3,10 @@ class BattleManager:
     def __init__(self, next_url=None):
         self.next = next_url
 
-    def get_info(self, options: dict = {}, **kwargs):
+    def get_info(self, options=None, **kwargs):
         # TODO: add docstring
+        if options is None:
+            options = {}
         if not kwargs:
             return {}
 
@@ -13,7 +15,8 @@ class BattleManager:
             data[key] = value.__dict__
             if options.get('except'):
                 for exclude in options.get('except'):
-                    data[key].pop(exclude)
+                    if data[key].get(exclude):
+                        data[key].pop(exclude)
 
         if options.get('next'):
             # TODO: make this more general for universal use
@@ -40,5 +43,20 @@ class BattleManager:
             },
             character=player,
             enemy=enemy)
+
+        return data
+
+    def colosseum_fight_calculate(self, battle):
+        player = battle.player
+        enemy = battle.enemy
+
+        data = self.get_info(
+            options={
+                'except': ["_state", "id"]
+            },
+            player=player,
+        )
+        data['enemy'] = enemy
+        data['status'] = ''
 
         return data

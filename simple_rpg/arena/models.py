@@ -25,14 +25,23 @@ class StrongEnemy(models.Model):
 
 
 class ColosseumBattle(models.Model):
-    player = models.ForeignKey(to=Character, on_delete=models.CASCADE, blank=True, related_name='battles')
+    class Status(models.IntegerChoices):
+        ONGOING = 0, 'Ongoing'
+        FINISHED = 1, 'Finished'
+
+    player = models.ForeignKey(to=Character, on_delete=models.CASCADE, related_name='battles')
     enemy_data = models.TextField()
+    status = models.BooleanField(choices=Status.choices, default=Status.ONGOING)
+    is_initialized = models.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         super(ColosseumBattle, self).__init__(*args, **kwargs)
 
         if self.enemy_data:
             self.enemy = json.loads(self.enemy_data)
+            if not self.is_initialized:
+                self.enemy['max_health'] = self.enemy['health']
+                self.is_initialized = True
         else:
             self.enemy = {}
 

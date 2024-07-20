@@ -1,12 +1,12 @@
+import random, json
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from managers.battle_manager import BattleManager
 from managers.character_manager import CharacterManager
 
-import random
-
-from .models import Enemy
+from .models import Enemy, StrongEnemy, ColosseumBattle
 from character.models import Character
 
 # Create your views here.
@@ -16,6 +16,7 @@ battle_manager = BattleManager()
 character_manager = CharacterManager()
 
 
+# Buffer view that contains links to various battle views
 def index(request):
     enemy = Enemy.objects.all()[random.randint(0, 1)]
     player = Character.objects.get(pk=1)
@@ -24,6 +25,11 @@ def index(request):
     return render(request, 'arena/index.html', data)
 
 
+def infinite_grinding(request):
+    pass
+
+
+# TODO: Rename to infinite_grinding_result
 def battle_result(request):
     player = Character.objects.get(pk=1)
     if request.GET:
@@ -34,4 +40,33 @@ def battle_result(request):
 
 def colosseum(request):
     player = Character.objects.get(pk=1)
+    enemy = StrongEnemy.objects.get(pk=1)
 
+    # Look if there is any battle with this character
+    # In future character will have only 1 battle ongoing
+    # If battle unfinished delete all information about this battle and create new
+    if player.battles.all():
+        battle = player.battles.all()[0]
+    else:
+        battle = ColosseumBattle(
+            player=player,
+            enemy_data=json.dumps(battle_manager.get_info(
+                options={
+                    'except': ['_state', 'id']
+                },
+                enemy=enemy
+            )['enemy'])
+        )
+        battle.save()
+
+    data = battle_manager.colosseum_fight_calculate(battle)
+
+    return render(request, 'arena/colosseum.html', data)
+
+
+def colosseum_battle(request):
+    pass
+
+
+def colosseum_battle_result(request):
+    pass
