@@ -13,7 +13,7 @@
 
     <ul>
         {% for key, value in enemies.items %}
-        <li>{{ key }}: {{ value }}</li>
+        <li>{{ key }}: {{ value }} <a href="{{ value.next }}">Attack</a></li>
         {% endfor %}
     </ul>
 
