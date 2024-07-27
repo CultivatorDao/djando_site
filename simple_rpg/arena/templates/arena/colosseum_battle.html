@@ -3,6 +3,7 @@
 
 {% block styles %}
     <link type="text/css" href="{% static 'arena/css/index.css' %}" rel="stylesheet">
+<meta charset="utf-8">
 {% endblock %}
 
 {% block content_header %}
@@ -13,6 +14,6 @@
 
     <p>{{ player }}</p>
     <p>{{ enemy }}</p>
-    <a href="?attack={{ attack }}">Attack</a>
+    <a href="?skill=basic_attack">Attack</a>
 
 {% endblock %}

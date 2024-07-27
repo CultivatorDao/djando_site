@@ -3,10 +3,13 @@ import json
 
 
 class Base64Converter:
-    __encoding = "ascii"
+    __encoding = "utf-8"
 
     def to_encoding(self, message):
-        return message.encode(self.__encoding)
+        if type(message) == str:
+            return message.encode(self.__encoding)
+        else:
+            return json.dumps(message).encode(self.__encoding)
 
     def encode(self, message):
         return b64.b64encode(self.to_encoding(message)).decode(self.__encoding)

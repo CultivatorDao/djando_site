@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from managers.battle_manager import BattleManager
 from managers.character_manager import CharacterManager
+from shared.base64_converter import Base64Converter
 
 from .models import Enemy, StrongEnemy, ColosseumBattle
 from character.models import Character
@@ -14,6 +15,7 @@ from character.models import Character
 
 battle_manager = BattleManager()
 character_manager = CharacterManager()
+converter = Base64Converter()
 
 
 # Buffer view that contains links to various battle views
@@ -48,7 +50,6 @@ def colosseum(request):
     enemies = StrongEnemy.objects.all()
 
     data = {}
-    next_url = reverse('colosseum_battle', args=["prepare"])
 
     for enemy in enemies:
         data[enemy.name] = battle_manager.get_info(
@@ -101,15 +102,13 @@ def colosseum_battle(request, state):
 
         case 'battle':
 
-            data = battle_manager.colosseum_fight_calculate(battle)
-            data["next"] = reverse('colosseum_battle', args=["battle"])
-            data["attack"] = random.randint(0, 10)
-            if request.GET:
-                if request.GET["attack"]:
-                    battle.enemy['health'] -= 10
-            print(battle.enemy['health'])
+            data = battle_manager.colosseum_fight_calculate(battle, request.GET)
 
-            battle.save()
+            # In future add to colosseum battle model field is_finished
+            # and use this field to check battle status
+            # if battle.is_finished:
+            #     return redirect(reverse('colosseum_battle', args=["result"]))
+            # return render(request, 'arena/colosseum_battle.html', data)
 
             match data["status"]:
                 case "Finished":
@@ -119,7 +118,19 @@ def colosseum_battle(request, state):
 
         case 'result':
 
-            data = {}
+            # if battle.is_won:
+            #     player.exp_current += battle.enemy["exp_reward"]
+
+            player.exp_current += battle.enemy["exp_reward"]
+
+            data = {
+                "exp_reward": battle.enemy["exp_reward"],
+                "gold_reward": battle.enemy["gold_reward"],
+                "return": reverse('colosseum')
+            }
+
+            player.current_hp = player.max_hp
+            player.save()
 
             return render(request, 'arena/colosseum_battle_result.html', data)
 

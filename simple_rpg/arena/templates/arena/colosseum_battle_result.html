@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block styles %}
+    <link type="text/css" href="{% static 'arena/css/index.css' %}" rel="stylesheet">
+<meta charset="utf-8">
+{% endblock %}
+
+{% block content_header %}
+    <h1>Colosseum</h1>
+{% endblock %}
+
+{% block content_main%}
+
+    <p>{{ player }}</p>
+    <p>{{ enemy }}</p>
+    <a href="?skill=basic_attack">Attack</a>
+
+{% endblock %}

@@ -31,8 +31,11 @@ class ColosseumBattle(models.Model):
 
     player = models.ForeignKey(to=Character, on_delete=models.CASCADE, related_name='battles')
     enemy_data = models.TextField()
+
     status = models.BooleanField(choices=Status.choices, default=Status.ONGOING)
     is_initialized = models.BooleanField(default=False)
+    # is_finished = models.BooleanField(default=False)
+    # is_won = models.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         super(ColosseumBattle, self).__init__(*args, **kwargs)
