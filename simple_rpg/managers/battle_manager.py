@@ -81,35 +81,20 @@ class BattleManager:
             },
             player=player,
         )
-
         data["next"] = self.converter.dict_to_base64(battle_log)
-
-        # if enemy['health'] <= 0 or player.current_hp <= 0:
-        #     battle.is_finished = True
-
         data['enemy'] = enemy
-        if enemy['health'] <= 0 or player.current_hp <= 0:
-            data['status'] = 'Finished'
-        else:
-            data['status'] = ''
 
-        # In future add colosseum battle model field result
-        # and replace this statement
-        # instead of statement just assign result to this field
-        # if enemy['health'] <= 0:
-        #     battle.is_won = True
-        # elif player.current_hp <= 0:
-        #     battle.is_won = False
+        if enemy['health'] <= 0 or player.current_hp <= 0:
+            battle.is_finished = True
 
         if enemy['health'] <= 0:
-            data['result'] = 'win'
-        if player.current_hp <= 0:
-            data['result'] = 'lose'
+            battle.is_won = True
+        elif player.current_hp <= 0:
+            battle.is_won = False
 
         # save all models changes
         player.save()
         battle.enemy = enemy
-
         battle.save()
 
         return data

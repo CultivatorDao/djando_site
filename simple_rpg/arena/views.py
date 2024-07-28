@@ -1,16 +1,15 @@
-import random, json
+import json
+import random
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
-from managers.battle_manager import BattleManager
-from managers.character_manager import CharacterManager
-from shared.base64_converter import Base64Converter
+from django.http import HttpResponseNotFound
 
 from .models import Enemy, StrongEnemy, ColosseumBattle
 from character.models import Character
-
-# Create your views here.
+from managers.battle_manager import BattleManager
+from managers.character_manager import CharacterManager
+from shared.base64_converter import Base64Converter
 
 
 battle_manager = BattleManager()
@@ -58,7 +57,6 @@ def colosseum(request):
             },
             enemy=enemy
         )['enemy']
-        # data[enemy.name]['next'] = f"{next_url}?id={data[enemy.name]['id']}"
         data[enemy.name]['next'] = f"prepare?id={data[enemy.name]['id']}"
 
     return render(
@@ -72,20 +70,14 @@ def colosseum(request):
 
 def colosseum_battle(request, state):
     player = Character.objects.get(pk=1)
-    enemy = StrongEnemy.objects.get(pk=1)
-    battle = player.battles.all()[0]
 
     match state:
         case 'prepare':
 
             if request.GET:
                 enemy = StrongEnemy.objects.get(pk=request.GET['id'])
-
-            # Look if there is any battle with this character
-            # In future character will have only 1 battle ongoing
-            # If battle unfinished delete all information about this battle and create new
-            if player.battles.all():
-                player.battles.all()[0].delete()
+            else:
+                enemy = StrongEnemy.objects.get(pk=1)
 
             battle = ColosseumBattle(
                 player=player,
@@ -101,39 +93,33 @@ def colosseum_battle(request, state):
             return redirect(reverse('colosseum_battle', args=["battle"]))
 
         case 'battle':
+            battle = player.battles.all()[0]
 
             data = battle_manager.colosseum_fight_calculate(battle, request.GET)
 
-            # In future add to colosseum battle model field is_finished
-            # and use this field to check battle status
-            # if battle.is_finished:
-            #     return redirect(reverse('colosseum_battle', args=["result"]))
-            # return render(request, 'arena/colosseum_battle.html', data)
-
-            match data["status"]:
-                case "Finished":
-                    return redirect(reverse('colosseum_battle', args=["result"]))
-                case _:
-                    return render(request, 'arena/colosseum_battle.html', data)
+            if battle.is_finished:
+                return redirect(reverse('colosseum_battle', args=["result"]))
+            return render(request, 'arena/colosseum_battle.html', data)
 
         case 'result':
+            battle = player.battles.all()[0]
 
-            # if battle.is_won:
-            #     player.exp_current += battle.enemy["exp_reward"]
-
-            player.exp_current += battle.enemy["exp_reward"]
+            if battle.is_won:
+                character_manager.get_reward(player, reward=battle.enemy["exp_reward"], reward_type='exp')
 
             data = {
-                "exp_reward": battle.enemy["exp_reward"],
-                "gold_reward": battle.enemy["gold_reward"],
+                "enemy": battle.enemy,
+                "result": battle.is_won,
                 "return": reverse('colosseum')
             }
 
+            # Restores player's hp to max. Delete in future
+            # after adding methods to heal player.
             player.current_hp = player.max_hp
             player.save()
+            battle.delete()
 
             return render(request, 'arena/colosseum_battle_result.html', data)
 
-    data = battle_manager.colosseum_fight_calculate(battle)
-
-    return render(request, 'arena/colosseum_battle.html', data)
+        case _:
+            return HttpResponseNotFound(request)

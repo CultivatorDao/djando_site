@@ -12,8 +12,14 @@
 
 {% block content_main%}
 
+    {% if result %}
+        <h1>You won</h1>
+    {% else %}
+        <h1>You lost</h1>
+    {% endif %}
+
     <p>{{ player }}</p>
     <p>{{ enemy }}</p>
-    <a href="?skill=basic_attack">Attack</a>
+    <a href="{{ return }}">Colosseum</a>
 
 {% endblock %}

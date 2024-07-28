@@ -11,6 +11,8 @@ class CharacterManager:
             player.attribute_points += self.next_level_attributes_quantity
             player.exp_next += player.exp_next * self.next_level_multiplication
 
+    # In future instead reward and reward_type take enemy as parameter
+    # and use enemy properties to add reward to player
     def get_reward(self, player, reward=0, reward_type: str = 'gold'):
         if reward_type == 'exp':
             player.exp_current += reward
